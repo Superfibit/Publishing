@@ -196,3 +196,38 @@ Use a single table with one row per day:
 - Top 3 search terms by sales
 - Notes / changes made
 
+
+---
+
+## What’s Next (Immediate Execution Checklist)
+
+### Next 24 Hours
+1. Lock final product description opening hook and subtitle.
+2. Publish the 120-word Author Central bio.
+3. Launch 3 ad campaigns with the exact daily caps:
+   - Auto: $6/day
+   - Manual Broad/Phrase: $8/day
+   - Manual Exact: $6/day
+4. Create a daily KPI log (copy the tracking structure above into Sheets).
+
+### Next 7 Days
+1. Keep pricing stable while collecting baseline conversion data.
+2. Add negative keywords for clearly irrelevant traffic only.
+3. Publish 2 organic posts (craft + reader promise) with soft CTA.
+4. Request honest reviews ethically via back-matter CTA.
+
+### Day 8 Decision
+- Promote top search terms into exact match.
+- Reduce bids or pause terms spending without conversions.
+- Keep only ad angles with best CTR + CVR combination.
+
+### Day 14 Decision
+- **If traction is strong:** increase winning campaign budgets by 15–25%.
+- **If mixed:** iterate hook copy and tighten keyword intent.
+- **If weak:** rebuild first-page conversion assets before raising spend.
+
+### What I need from you to execute the next optimization pass
+- Screenshot/export of ad dashboard (campaign-level metrics)
+- Current Amazon listing blurb text
+- Current subtitle + exact paperback/hardcover prices
+- Current review count and average rating
