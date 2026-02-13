@@ -3,7 +3,7 @@ dist/
 .env
 *.db
 *.sqlite
-data/*.json
+data/*
 !data/.gitkeep
 .DS_Store
 *.log
