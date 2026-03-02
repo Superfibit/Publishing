@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Book Publisher - Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h1>AI Book Publisher</h1>
+        <p>Drive traffic. Get sales.</p>
+      </div>
+      <nav>
+        <div class="nav-section">
+          <div class="nav-section-title">Overview</div>
+          <a class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+            <span class="icon">&#9776;</span> Dashboard
+          </a>
+          <a class="nav-item" data-page="books" onclick="navigate('books')">
+            <span class="icon">&#128218;</span> My Books
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Marketing</div>
+          <a class="nav-item" data-page="social" onclick="navigate('social')">
+            <span class="icon">&#128172;</span> Social Media
+          </a>
+          <a class="nav-item" data-page="content" onclick="navigate('content')">
+            <span class="icon">&#9998;</span> Content & SEO
+          </a>
+          <a class="nav-item" data-page="email" onclick="navigate('email')">
+            <span class="icon">&#9993;</span> Email Marketing
+          </a>
+          <a class="nav-item" data-page="ads" onclick="navigate('ads')">
+            <span class="icon">&#128176;</span> Amazon Ads
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Management</div>
+          <a class="nav-item" data-page="approvals" onclick="navigate('approvals')">
+            <span class="icon">&#9989;</span> Approvals
+            <span class="nav-badge" id="approval-count" style="display:none">0</span>
+          </a>
+          <a class="nav-item" data-page="analytics" onclick="navigate('analytics')">
+            <span class="icon">&#128200;</span> Analytics
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+      <!-- Dashboard Page -->
+      <div id="page-dashboard" class="page">
+        <div class="page-header">
+          <h2>Dashboard</h2>
+          <button class="btn btn-primary" onclick="refreshDashboard()">Refresh</button>
+        </div>
+        <div class="stats-grid" id="stats-grid"></div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <h3>Pending Approvals</h3>
+              <button class="btn btn-sm btn-outline" onclick="navigate('approvals')">View All</button>
+            </div>
+            <div class="card-body" id="dashboard-approvals">
+              <div class="loading"><div class="spinner"></div> Loading...</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>Recent Activity</h3>
+            </div>
+            <div class="card-body" id="dashboard-activity">
+              <div class="loading"><div class="spinner"></div> Loading...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Books Page -->
+      <div id="page-books" class="page" style="display:none">
+        <div class="page-header">
+          <h2>My Books</h2>
+          <button class="btn btn-primary" onclick="showAddBookModal()">+ Add Book</button>
+        </div>
+        <div id="books-list"></div>
+      </div>
+
+      <!-- Social Media Page -->
+      <div id="page-social" class="page" style="display:none">
+        <div class="page-header">
+          <h2>Social Media</h2>
+        </div>
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-header"><h3>Generate Social Posts</h3></div>
+          <div class="card-body">
+            <div class="grid-2">
+              <div class="form-group">
+                <label>Select Book</label>
+                <select class="form-control" id="social-book-select"></select>
+              </div>
+              <div class="form-group">
+                <label>Platform</label>
+                <select class="form-control" id="social-platform-select">
+                  <option value="twitter">Twitter / X</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="tiktok">TikTok</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Custom Prompt (optional)</label>
+              <textarea class="form-control" id="social-prompt" placeholder="Leave empty for auto-generated content, or describe what kind of post you want..."></textarea>
+            </div>
+            <div style="display:flex;gap:12px">
+              <button class="btn btn-primary" onclick="generateSocialPost()">Generate Post</button>
+              <button class="btn btn-success" onclick="generateAllPlatformPosts()">Generate All Platforms</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Generated Posts</h3>
+            <button class="btn btn-sm btn-outline" onclick="loadSocialPosts()">Refresh</button>
+          </div>
+          <div class="card-body" id="social-posts-list">
+            <div class="empty-state">
+              <div class="empty-icon">&#128172;</div>
+              <h3>No posts yet</h3>
+              <p>Generate your first social media post above.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content & SEO Page -->
+      <div id="page-content" class="page" style="display:none">
+        <div class="page-header">
+          <h2>Content & SEO</h2>
+        </div>
+        <div class="tabs">
+          <div class="tab active" onclick="switchContentTab('blog')">Blog Posts</div>
+          <div class="tab" onclick="switchContentTab('seo')">SEO Keywords</div>
+          <div class="tab" onclick="switchContentTab('landing')">Landing Pages</div>
+        </div>
+        <div id="content-tab-blog">
+          <div class="card" style="margin-bottom:24px">
+            <div class="card-header"><h3>Generate Blog Post</h3></div>
+            <div class="card-body">
+              <div class="grid-2">
+                <div class="form-group">
+                  <label>Select Book</label>
+                  <select class="form-control" id="blog-book-select"></select>
+                </div>
+                <div class="form-group">
+                  <label>Target Keyword</label>
+                  <input type="text" class="form-control" id="blog-keyword" placeholder="e.g. best sci-fi books 2024">
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="generateBlogPost()">Generate Blog Post</button>
+            </div>
+          </div>
+          <div id="blog-posts-list"></div>
+        </div>
+        <div id="content-tab-seo" style="display:none">
+          <div class="card" style="margin-bottom:24px">
+            <div class="card-header"><h3>SEO Keyword Research</h3></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Select Book</label>
+                <select class="form-control" id="seo-book-select"></select>
+              </div>
+              <div style="display:flex;gap:12px">
+                <button class="btn btn-primary" onclick="researchKeywords()">Research Keywords</button>
+                <button class="btn btn-success" onclick="performSeoAudit()">Full SEO Audit</button>
+              </div>
+            </div>
+          </div>
+          <div id="seo-results"></div>
+        </div>
+        <div id="content-tab-landing" style="display:none">
+          <div class="card" style="margin-bottom:24px">
+            <div class="card-header"><h3>Generate Landing Page</h3></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Select Book</label>
+                <select class="form-control" id="landing-book-select"></select>
+              </div>
+              <button class="btn btn-primary" onclick="generateLandingPage()">Generate Landing Page</button>
+            </div>
+          </div>
+          <div id="landing-pages-list"></div>
+        </div>
+      </div>
+
+      <!-- Email Marketing Page -->
+      <div id="page-email" class="page" style="display:none">
+        <div class="page-header">
+          <h2>Email Marketing</h2>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>Create Email Campaign</h3></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Select Book</label>
+                <select class="form-control" id="email-book-select"></select>
+              </div>
+              <div class="form-group">
+                <label>Email Type</label>
+                <select class="form-control" id="email-type-select">
+                  <option value="launch">Book Launch</option>
+                  <option value="promotion">Promotion / Sale</option>
+                  <option value="newsletter">Newsletter</option>
+                  <option value="welcome">Welcome Email</option>
+                  <option value="review_request">Review Request</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" onclick="generateEmailCampaign()">Generate Email</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>Subscribers</h3>
+              <button class="btn btn-sm btn-primary" onclick="showAddSubscriberModal()">+ Add</button>
+            </div>
+            <div class="card-body" id="subscriber-stats">
+              <div class="loading"><div class="spinner"></div> Loading...</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:24px">
+          <div class="card-header"><h3>Email Campaigns</h3></div>
+          <div class="card-body" id="email-campaigns-list"></div>
+        </div>
+      </div>
+
+      <!-- Amazon Ads Page -->
+      <div id="page-ads" class="page" style="display:none">
+        <div class="page-header">
+          <h2>Amazon Ads</h2>
+        </div>
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-header"><h3>Create Ad Campaign</h3></div>
+          <div class="card-body">
+            <div class="grid-3">
+              <div class="form-group">
+                <label>Select Book</label>
+                <select class="form-control" id="ads-book-select"></select>
+              </div>
+              <div class="form-group">
+                <label>Campaign Name</label>
+                <input type="text" class="form-control" id="ads-name" placeholder="e.g. Summer Promo">
+              </div>
+              <div class="form-group">
+                <label>Campaign Type</label>
+                <select class="form-control" id="ads-type">
+                  <option value="sponsored_products">Sponsored Products</option>
+                  <option value="sponsored_brands">Sponsored Brands</option>
+                  <option value="lockscreen">Lockscreen Ads</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label>Daily Budget ($)</label>
+                <input type="number" class="form-control" id="ads-daily-budget" value="5" min="1">
+              </div>
+              <div class="form-group">
+                <label>Total Budget ($)</label>
+                <input type="number" class="form-control" id="ads-total-budget" value="100" min="10">
+              </div>
+            </div>
+            <p style="color:var(--warning);font-size:13px;margin-bottom:16px">
+              All ad campaigns require your approval before any money is spent.
+            </p>
+            <div style="display:flex;gap:12px">
+              <button class="btn btn-primary" onclick="createAdCampaign()">Create Campaign (Requires Approval)</button>
+              <button class="btn btn-outline" onclick="generateAdKeywords()">Generate Keywords</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Campaigns</h3></div>
+          <div class="card-body" id="ads-campaigns-list"></div>
+        </div>
+      </div>
+
+      <!-- Approvals Page -->
+      <div id="page-approvals" class="page" style="display:none">
+        <div class="page-header">
+          <h2>Financial Approvals</h2>
+          <span class="badge badge-warning" id="approval-total-pending">$0.00 pending</span>
+        </div>
+        <p style="color:var(--gray-500);margin-bottom:24px;font-size:14px">
+          Every action that involves spending money requires your explicit approval. Nothing will be charged without your consent.
+        </p>
+        <div id="approvals-list"></div>
+      </div>
+
+      <!-- Analytics Page -->
+      <div id="page-analytics" class="page" style="display:none">
+        <div class="page-header">
+          <h2>Analytics</h2>
+          <button class="btn btn-outline" onclick="loadAnalytics()">Refresh</button>
+        </div>
+        <div id="analytics-content"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Modal</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer" id="modal-footer"></div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
